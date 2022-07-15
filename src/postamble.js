@@ -161,6 +161,9 @@ function callMain(args) {
     abortWrapperDepth += 2;
 #endif
 
+#if ASSERTIONS
+    inUserCode = true;
+#endif
 #if STANDALONE_WASM
     entryFunction();
     // _start (in crt1.c) will call exit() if main return non-zero.  So we know
@@ -189,6 +192,9 @@ function callMain(args) {
     return handleException(e);
 #endif // !PROXY_TO_PTHREAD
   } finally {
+#if ASSERTIONS
+    inUserCode = false;
+#endif
     calledMain = true;
 
 #if ABORT_ON_WASM_EXCEPTIONS

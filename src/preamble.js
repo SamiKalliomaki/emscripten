@@ -368,6 +368,7 @@ var runDependencyWatcher = null;
 var dependenciesFulfilled = null; // overridden to take different actions when all run dependencies are fulfilled
 #if ASSERTIONS
 var runDependencyTracking = {};
+var inUserCode = false;
 #endif
 
 function getUniqueRunDependency(id) {

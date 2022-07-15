@@ -3500,6 +3500,10 @@ mergeInto(LibraryManager.library, {
       return;
     }
     try {
+#if ASSERTIONS
+      assert(!inUserCode, 'callUserCallback called when already running user code');
+      inUserCode = true;
+#endif
       func();
 #if EXIT_RUNTIME || USE_PTHREADS
 #if USE_PTHREADS && !EXIT_RUNTIME
@@ -3510,6 +3514,9 @@ mergeInto(LibraryManager.library, {
     } catch (e) {
       handleException(e);
     }
+#if ASSERTIONS
+    inUserCode = false;
+#endif
   },
 
   $maybeExit__deps: ['exit', '$handleException',
