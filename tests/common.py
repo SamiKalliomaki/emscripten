@@ -1553,6 +1553,7 @@ class BrowserCore(RunnerCore):
     basename = os.path.basename(expected)
     shutil.copyfile(expected, os.path.join(self.get_dir(), basename))
     reporting = read_file(test_file('browser_reporting.js'))
+    assert not os.path.exists('reftest.js')
     write_file('reftest.js', '''
       function doReftest() {
         if (doReftest.done) return;
