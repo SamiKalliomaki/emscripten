@@ -18,92 +18,89 @@ GLuint programObject;
 int width = 512;
 int height = 256;
 
-GLuint LoadShader ( GLenum type, const char *shaderSrc )
-{
+GLuint LoadShader(GLenum type, const char *shaderSrc) {
    GLuint shader;
    GLint compiled;
-   
-   shader = glCreateShader ( type );
-   if ( shader == 0 )
-   	return 0;
 
-   glShaderSource ( shader, 1, &shaderSrc, NULL );
-   glCompileShader ( shader );
-   glGetShaderiv ( shader, GL_COMPILE_STATUS, &compiled );
-   if ( !compiled ) 
+   shader = glCreateShader(type);
+   if (shader == 0) {
+    return 0;
+   }
+
+   glShaderSource(shader, 1, &shaderSrc, NULL);
+   glCompileShader(shader);
+   glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+   if (!compiled)
    {
       GLint infoLen = 0;
-      glGetShaderiv ( shader, GL_INFO_LOG_LENGTH, &infoLen );
-      if ( infoLen > 1 )
+      glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+      if (infoLen > 1)
       {
-         char* infoLog = malloc (sizeof(char) * infoLen );
-         glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
-         printf ( "Error compiling shader:\n%s\n", infoLog );            
-         free ( infoLog );
+         char* infoLog = malloc(sizeof(char) * infoLen);
+         glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+         printf("Error compiling shader:\n%s\n", infoLog);
+         free(infoLog);
       }
-      glDeleteShader ( shader );
+      glDeleteShader(shader);
       return 0;
    }
    return shader;
 }
 
-int Init ()
-{
-   const char* vShaderStr =  
+int Init() {
+   const char* vShaderStr =
       "attribute vec4 vPosition;    \n"
       "void main()                  \n"
       "{                            \n"
       "   gl_Position = vPosition;  \n"
       "}                            \n";
-   
-   const char* fShaderStr =  
+
+   const char* fShaderStr =
       "precision mediump float;\n"\
-      "void main()                                  \n"
-      "{                                            \n"
-      "  gl_FragColor = vec4 ( 0.0, 0.0, 1.0, 1.0 );\n"
-      "}                                            \n";
+      "void main()                               \n"
+      "{                                         \n"
+      "  gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);\n"
+      "}                                         \n";
 
    GLuint vertexShader;
    GLuint fragmentShader;
    GLint linked;
 
-   vertexShader = LoadShader ( GL_VERTEX_SHADER, vShaderStr );
-   fragmentShader = LoadShader ( GL_FRAGMENT_SHADER, fShaderStr );
+   vertexShader = LoadShader(GL_VERTEX_SHADER, vShaderStr);
+   fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
 
-   programObject = glCreateProgram ( );
-   if ( programObject == 0 )
+   programObject = glCreateProgram();
+   if(programObject == 0)
       return 0;
 
-   glAttachShader ( programObject, vertexShader );
-   glAttachShader ( programObject, fragmentShader );
-   glBindAttribLocation ( programObject, 0, "vPosition" );
-   glLinkProgram ( programObject );
-   glGetProgramiv ( programObject, GL_LINK_STATUS, &linked );
-   if ( !linked ) 
-   {
+   glAttachShader(programObject, vertexShader);
+   glAttachShader(programObject, fragmentShader);
+   glBindAttribLocation(programObject, 0, "vPosition");
+   glLinkProgram(programObject);
+   glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
+   if (!linked) {
       GLint infoLen = 0;
-      glGetProgramiv ( programObject, GL_INFO_LOG_LENGTH, &infoLen );
-      if ( infoLen > 1 )
+      glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
+      if (infoLen > 1)
       {
-         char* infoLog = malloc (sizeof(char) * infoLen );
-         glGetProgramInfoLog ( programObject, infoLen, NULL, infoLog );
-         printf ( "Error linking program:\n%s\n", infoLog );            
-         free ( infoLog );
+         char* infoLog = malloc(sizeof(char) * infoLen);
+         glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
+         printf("Error linking program:\n%s\n", infoLog);
+         free(infoLog);
       }
-      glDeleteProgram ( programObject );
+      glDeleteProgram(programObject);
       return GL_FALSE;
    }
 
-   glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
+   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
    return GL_TRUE;
 }
 
 ///
 // Draw a triangle using the shader pair created in Init()
 //
-void Draw ()
-{
-   GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f, 
+void Draw() {
+   GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f,
                            -0.5f, -0.5f, 0.0f,
                             0.5f, -0.5f, 0.0f };
 
@@ -112,16 +109,16 @@ void Draw ()
    glGenBuffers(1, &vertexPosObject);
    glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
    glBufferData(GL_ARRAY_BUFFER, 9*4, vVertices, GL_STATIC_DRAW);
-   
-   glViewport ( 0, 0, width, height );
-   glClear ( GL_COLOR_BUFFER_BIT );
-   glUseProgram ( programObject );
+
+   glViewport(0, 0, width, height);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glUseProgram(programObject);
 
    glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
    glVertexAttribPointer(0 /* ? */, 3, GL_FLOAT, 0, 0, 0);
    glEnableVertexAttribArray(0);
 
-   glDrawArrays ( GL_TRIANGLES, 0, 3 );
+   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void Verify() {
@@ -141,16 +138,14 @@ void Verify() {
     ok = ok && (data[x*4+0] == 0);
     ok = ok && (data[x*4+1] == 0);
   }
-  int result = seen && ok;
-  REPORT_RESULT(result);
+  assert(seen && ok);
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   SDL_Window *window;
   SDL_GLContext context;
 
-  if ( SDL_Init(SDL_INIT_VIDEO) != 0 ) {
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Unable to initialize SDL: %s\n", SDL_GetError());
     return 1;
   }
